@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <link rel="icon" href="../static/images/icon.png">
+    <link rel="stylesheet" href="static/css/style.css">
+    <title>HireLinkX</title>
+
+
+    <style>
+        .message {
+            margin-bottom: 10px;
+            border-radius: 12px;
+            max-width: 70%;
+            clear: both;
+            padding: 8px 12px;
+            word-wrap: break-word;
+            position: relative;
+        }
+
+        /* Sender's chat bubble styles */
+        .message.sender {
+            float: right;
+            background-color: #dcf8c6 !important;
+            border: 2px solid #dcf8c6;
+            border-bottom-right-radius: 0 !important;
+        }
+
+        /* Receiver's chat bubble styles */
+        .message.receiver {
+            float: left;
+            background-color: #fcfcfc !important;
+            border: 2px solid #fcfcfc;
+            border-top-left-radius: 0 !important;
+        }
+
+        /* Sender's name and content alignment */
+        .message.sender .name {
+            display: none;
+            /* Hide sender's name */
+            text-align: right;
+        }
+
+        .message.sender .content {
+            text-align: right;
+            color: #000000;
+            /* Black text for sender's messages */
+            padding: 0 !important;
+            margin: 10px;
+            background-color: #dcf8c6 !important;
+        }
+
+        /* Receiver's name and content alignment */
+        .message.receiver .name {
+            display: none;
+            /* Hide receiver's name */
+            text-align: left;
+        }
+
+        .message.receiver .content {
+            text-align: left;
+            color: #000000;
+            padding: 0 !important;
+            margin: 10px;
+            background-color: #fcfcfc !important;
+        }
+
+        /* Chat box styling */
+        .chat-box {
+            width: 100%;
+            height: calc(100% - 56px);
+            /* Adjust based on your header size */
+            overflow-y: auto;
+            padding: 20px;
+            background-color: #f2f2f2;
+        }
+
+        /* Message input styling */
+        #messageInput {
+            /* width: calc(100% - 70px); */
+            /* Adjust based on your send button size */
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #cccccc;
+            /* Light gray border */
+            border-radius: 10px;
+            outline: none;
+            width: 200%;
+        }
+
+        /* Send button styling */
+        button[type="submit"] {
+            width: 100px;
+            /* Adjust as needed */
+            margin-top: 10px;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: none;
+            background-color: #25d366;
+            /* WhatsApp green for send button */
+            color: #ffffff;
+            /* White text color */
+            border-radius: 10px;
+            cursor: pointer;
+            outline: none;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #128c7e;
+            /* Darker green on hover */
+        }
+    </style>
+
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <img src="../static/images/logo2.png" alt="Company Logo" class="logo2">
+        </div>
+
+        <nav>
+            <ul>
+                <li><a href="/candidate_index" class="nav-link ">Home</a></li>
+                <li><a href="/about" class="nav-link">About Us</a></li>
+                <li><a href="/services" class="nav-link">Services</a></li>
+                <li><a href="/company" class="nav-link">Companies</a></li>
+                <li><a href="/vacancy" class="nav-link">Vacancies Wall</a></li>
+                <li><a href="/testimonal" class="nav-link">Testimoinals</a></li>
+                <li><a href="/contact" class="nav-link">Contact Us</a></li>
+                <li class="user-profile">
+                    <a href="/profile" class="profile-link">My Profile</a>
+                    <span>|</span>
+                    <a href="/logout" class="profile-link">Log Out</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+
+
+
+    <div class="container">
+
+        {% if email_tx %}
+        <textarea id="valprop" hidden>{{ email_tx }}</textarea>
+        {% endif %}
+        {% if sender_tx %}
+        <textarea id="sender" hidden>{{ sender_tx }}</textarea>
+        {% endif %}
+
+        <div class=" all_start" id="divprop">
+            <img class="profiileimg" src="" alt="" id="profile">
+            <h3 class="idname ms-3" id="idname"></h3>
+        </div>
+
+        <div class="chat-box" id="chatBox">
+            <!-- Messages will be displayed here -->
+        </div>
+        <form id="messageForm">
+            <input type="text" id="messageInput" placeholder="Type your message...">
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+
+            function getProfile() {
+
+                var proval = document.getElementById("valprop").value;
+                var formData = new FormData();
+                formData.append("proval", proval);
+
+                fetch("/get_profile", {
+                    method: "POST",
+                    body: formData,
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        const job = data.jobs;
+
+                        document.getElementById("profile").src = job.image_path || "../static/images/profile.jpeg";
+                        document.getElementById("idname").innerHTML = job.username || "";
+
+                    });
+            }
+
+            // Function to fetch and display messages
+            function getMessages() {
+                fetch('/get_messages')
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        const senderInput = document.getElementById('sender').value;
+                        const receiverInput = document.getElementById('valprop').value;
+                        const chatBox = document.getElementById('chatBox');
+                        chatBox.innerHTML = ''; // Clear previous messages
+                        for (const key in data) {
+                            if (data.hasOwnProperty(key)) {
+                                const message = data[key];
+                                const messageDiv = document.createElement('div');
+                                messageDiv.classList.add('message');
+                                if (message.sender === senderInput && message.receiver === receiverInput || message.sender === receiverInput && message.receiver === senderInput) {
+                                    if (message.sender === senderInput) {
+                                        messageDiv.classList.add('sender');
+                                        messageDiv.innerHTML = `
+                            <div class="name">${message.sender}</div>
+                            <div class="content">${message.message}</div>
+                        `;
+                                    } else {
+                                        messageDiv.classList.add('receiver');
+                                        messageDiv.innerHTML = `
+                            <div class="name">${message.sender}</div>
+                            <div class="content">${message.message}</div>
+                        `;
+                                    }
+                                }
+                                chatBox.appendChild(messageDiv);
+                            }
+                        }
+                        // Scroll to the bottom of the chat box
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    });
+            }
+
+            // Fetch and display messages on page load
+            getMessages();
+            getProfile();
+
+
+
+
+            // Function to send message
+            document.getElementById('messageForm').addEventListener('submit', function (event) {
+                event.preventDefault();
+                const messageInput = document.getElementById('messageInput');
+                const senderInput = document.getElementById('sender');
+                const receiverInput = document.getElementById('valprop');
+
+                const message = messageInput.value.trim();
+                const sender = senderInput ? senderInput.value.trim() : "";
+                const receiver = receiverInput ? receiverInput.value.trim() : "";
+
+                if (message !== '' && sender !== '' && receiver !== '') {
+                    fetch('/send_message', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: `message=${encodeURIComponent(message)}&sender=${encodeURIComponent(sender)}&receiver=${encodeURIComponent(receiver)}`
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Clear the message input field
+                                messageInput.value = '';
+                                // Fetch and display updated messages
+                                getMessages();
+                            } else {
+                                console.error('Failed to send message.');
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                } else {
+                    console.error('Please fill in all required fields.');
+                }
+            });
+
+        });
+
+    </script>
+
+
+
+
+
+    <footer>
+        <p>&copy; 2023 designed by Code bunch team. All rights reserved.</p>
+    </footer>
+</body>
+
+</html>

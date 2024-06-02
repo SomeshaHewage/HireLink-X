@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="static/css/style.css">
+    <link rel="icon" href="../static/images/icon.png">
+    <title>Register Page as candidate</title>
+</head>
+
+<body>
+    <div class="canregister-container">
+        <h1>Register As Candidate</h1>
+
+        {% if error %}
+
+        <h3 class="tx_red">{{ error }}</h3>
+
+        {% endif %}
+
+        <form action="/addCandidate" method="POST" enctype="multipart/form-data">
+            <div class="caninput-container">
+                <label for="image">Profile Image</label>
+                <input type="file" id="image" name="image" accept="image/*">
+            </div>
+            <div class="caninput-container">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="caninput-container">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="caninput-container">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="caninput-container">
+                <label for="phone">Phone Number:</label>
+                <input type="tel" id="phone" name="phone" required>
+            </div>
+            <div class="caninput-container">
+                <label for="birthdate">Birthdate:</label>
+                <input type="date" id="birthdate" name="birthdate" required>
+            </div>
+            <div class="caninput-container">
+                <label for="industry">Industry:</label>
+                <input type="text" id="industry" name="industry">
+            </div>
+            <div class="caninput-container">
+                <label for="education">Education:</label>
+                <input type="text" id="education" name="education">
+            </div>
+            <div class="caninput-container">
+                <label for="experience">Experience:</label>
+                <textarea id="experience" name="experience" rows="4"></textarea>
+            </div>
+            <div class="caninput-container">
+                <label for="resume">Upload Resume:</label>
+                <input type="file" id="resume" name="resume" accept=".pdf, .doc, .docx">
+            </div>
+            <div class="caninput-container">
+                <label for="resume">Upload Cover Letter:</label>
+                <input type="file" id="resume" name="coverLetter" accept=".pdf, .doc, .docx">
+            </div>
+            <div class="caninput-container">
+                <label for="resume">Upload University Letter:</label>
+                <input type="file" id="resume" name="uniLetter" accept=".pdf, .doc, .docx">
+            </div>
+            <div class="canaction-container">
+                <button type="submit">Register</button>
+            </div>
+        </form>
+        <div class="canlogin-link">
+            <p>If you already have an account? <a href="/logincan">Login As Candidate</a></p>
+        </div>
+    </div>
+
+
+</body>
+
+</html>
