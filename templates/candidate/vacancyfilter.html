@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <link rel="stylesheet" href="static/css/style.css" />
+  <link rel="icon" href="../static/images/icon.png">
+  <title>HireLinkX</title>
+</head>
+
+<body>
+  <header>
+    <div class="logo">
+      <img src="../static/images/logo2.png" alt="Company Logo" class="logo2">
+    </div>
+
+    <nav>
+      <ul>
+        <li><a href="/candidate_index" class="nav-link">Home</a></li>
+        <li><a href="/about" class="nav-link">About Us</a></li>
+        <li><a href="/services" class="nav-link">Services</a></li>
+        <li><a href="/company" class="nav-link">Companies</a></li>
+        <li><a href="/vacancy" class="nav-link active">Vacancies Wall</a></li>
+        <li><a href="/testimonal" class="nav-link">Testimoinals</a></li>
+        <li><a href="/contact" class="nav-link">Contact Us</a></li>
+        <li class="user-profile">
+          <a href="/profile" class="profile-link">My Profile</a>
+          <span>|</span>
+          <a href="/logout" class="profile-link">Log Out</a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="hero">
+    <div class="about">
+      <h1>Filtered Vacancies Wall</h1>
+
+      {% if jobname %}
+      <textarea id="jobname" hidden>{{ jobname }}</textarea>
+      {% endif %}
+
+    </div>
+  </div>
+
+  <div class=" allrow" id="dataContainer"></div>
+
+  <script>
+    loadjob();
+
+    function loadjob() {
+      var file = "data";
+
+      var formData = new FormData();
+      formData.append("file", file);
+
+      fetch("/loaddata", {
+        method: "POST",
+        body: formData,
+      })
+        .then((response) => response.json())
+        .then((message) => {
+          console.log(message.jobs);
+
+          const dataContainer = document.getElementById("dataContainer");
+          const jobname = document.getElementById("jobname").value;
+
+          // Loop through the data and create HTML elements to display it
+          for (const key in message.jobs) {
+            if (message.jobs.hasOwnProperty(key)) {
+              const item = message.jobs[key];
+              if (item.position===jobname) {
+
+
+                const div = document.createElement("div");
+                // div.innerHTML = `<strong>Introduction:</strong> ${item.introduction}<br><strong>Position:</strong> ${item.position}<br><br>`;
+                div.innerHTML = ` <div class="vac-card ">
+      <div class="vac-card-content">
+        <h2 class="vac-position-title">Position Title: ${item.position}</h2>
+        <p class="vac-job-description">
+            ${item.introduction}
+        </p>
+        <h3 class="vac-responsibilities">Key Responsibilities:</h3>
+        <ul class="vac-responsibilities-list">
+          <li>
+            ${item.key_res}
+          </li>
+        </ul>
+        <h3 class="vac-qualifications">Qualifications:</h3>
+        <ul class="vac-qualifications-list">
+          <li>
+            ${item.quali}
+          </li>
+        </ul>
+        <p class="vac-duration">Duration: ${item.duration}</p>
+        <p class="vac-location">Location:  ${item.loc}</p>
+        <p class="vac-location">Company Name:  ${item.username}</p>
+
+        <form action="/applyNow" method="POST" >
+          <input type="text" name="position" value="${item.position}" hidden>
+          <input type="text" name="company_name" value="${item.username}" hidden>
+          <input type="text" name="company_email" value="${item.company_email}" hidden>
+        <button id="applyModalBtn" type="submit">Apply Now</button>
+      </form>
+        <div id="applyModal" class="applymodal">
+          <div class="applymodal-content">
+            <span class="applyclose">&times;</span>
+            <p>Succesfully Sent Your Account :)</p>
+            <button id="chatpopButton">
+              <a href="/chat">Chat with company</a>
+            </button>
+          </div>
+        </div>
+     
+      </div>
+    </div> `;
+                dataContainer.appendChild(div);
+              }
+            }
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    }
+  </script>
+
+
+  <footer>
+    <p>&copy; 2023 designed by Code bunch team. All rights reserved.</p>
+  </footer>
+
+  <script src="static/js/apply.js"></script>
+</body>
+
+</html>

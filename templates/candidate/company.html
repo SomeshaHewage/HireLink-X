@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="static/css/style.css">
+    <link rel="icon" href="../static/images/icon.png">
+    <title>HireLinkX</title>
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <img src="../static/images/logo2.png" alt="Company Logo" class="logo2">
+        </div>
+
+        <nav>
+            <ul>
+                <li><a href="/candidate_index" class="nav-link ">Home</a></li>
+                <li><a href="/about" class="nav-link">About Us</a></li>
+                <li><a href="/services" class="nav-link">Services</a></li>
+                <li><a href="/company" class="nav-link active">Companies</a></li>
+                <li><a href="/vacancy" class="nav-link">Vacancies Wall</a></li>
+                <li><a href="/testimonal" class="nav-link">Testimoinals</a></li>
+                <li><a href="/contact" class="nav-link">Contact Us</a></li>
+                <li class="user-profile">
+                    <a href="/profile" class="profile-link">My Profile</a>
+                    <span>|</span>
+                    <a href="/logout" class="profile-link">Log Out</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="hero">
+        <div class="about">
+            <h1>Companies</h1>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row" id="boxcom">
+
+
+        </div>
+    </div>
+
+
+
+
+
+    <footer>
+        <p>&copy; 2023 designed by Code bunch
+            team. All rights reserved.</p>
+    </footer>
+
+
+
+    <script>
+        loadjob();
+
+        function loadjob() {
+            var file = "data";
+
+            var formData = new FormData();
+            formData.append("file", file);
+
+            fetch("/loadCompany", {
+                method: "POST",
+                body: formData,
+            })
+                .then((response) => response.json())
+                .then((message) => {
+                    console.log(message.jobs);
+
+                    const dataContainer = document.getElementById("boxcom");
+
+                    // Loop through the data and create HTML elements to display it
+                    for (const key in message.jobs) {
+                        if (message.jobs.hasOwnProperty(key)) {
+                            const item = message.jobs[key];
+                            var name = item.username;
+                            var email = item.email;
+                            var profile_img_pa = item.image_path;
+                            const div = document.createElement("div");
+                            div.innerHTML = ` 
+    
+                  <div class="col-12 px-5 py-2">
+                <div class="com-card row">
+                    <div class="col-12 col-md-3">
+                        <img src="${item.image_path}"
+                            alt="Company 1 Image" class="com-card-image">
+                    </div>
+                    <div class="col-12 col-md-9">
+                        <div class="com-card-content">
+                            <h2 class="company-names">${item.username}</h2>
+                            <p class="company-descriptions">${item.introduction}</p>
+                            <button class="chat-buttons"  onclick="chatcom('${name}','${email}','${profile_img_pa}');" >Chat Now</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+      
+      `;
+                            dataContainer.appendChild(div);
+                        }
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                });
+        }
+    </script>
+
+
+<script>
+    function chatcom(name, email, profile) {
+        var formData = new FormData();
+        formData.append("name", name);
+        formData.append("email", email);
+        formData.append("profile", profile);
+
+        fetch("/chatcom", {
+            method: "POST",
+            body: formData,
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.text(); // Assuming your server returns HTML
+            }
+            throw new Error('Network response was not ok.');
+        })
+        .then(html => {
+            // Assuming you want to replace the current document content with the response
+            document.open();
+            document.write(html);
+            document.close();
+        })
+        .catch(error => {
+            console.error("Error:", error);
+        });
+    }
+</script>
+
+</body>
+
+</html>

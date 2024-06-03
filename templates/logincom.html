@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="static/css/style.css">
+    <link rel="icon" href="../static/images/icon.png">
+    <title>Login Page as company</title>
+</head>
+<body>
+    <div class="logincan-container">
+        <h1>Login As Company</h1>
+        {% if error %}
+   
+        <h3 class="tx_red">{{ error }}</h3>
+    
+    {% endif %}
+        <form action="/loginCompany" method="POST">
+            <div class="logincan-input-container">
+                <label for="logincan-username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="logincan-input-container">
+                <label for="logincan-password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="logincan-action-container">
+                <button type="submit" class="logincan-button">Login</button>
+            </div>
+            <a href="#" id="forgot-password">Forgot Password?</a>
+        </form>
+        <div class="register-container">
+            <p>If you don't have an account? <a href="/regcom">Register</a></p>
+        </div>
+    </div>
+</body>
+</html>
